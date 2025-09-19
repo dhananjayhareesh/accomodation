@@ -1,4 +1,4 @@
-// ---------- ROOM DETAILS PAGE ----------
+// ---------- ROOM DETAILS PAGE (Responsive & Professional) ----------
 import 'package:accomodation_admin/features/side_panel/super_admin/view/edit_room.dart';
 import 'package:accomodation_admin/features/side_panel/super_admin/view/room_list.dart';
 import 'package:accomodation_admin/widgets/custom_scafold.dart';
@@ -27,7 +27,6 @@ class RoomDetailsPage extends StatelessWidget {
       );
 
       if (edited != null) {
-        // send back to parent
         onSave?.call(edited);
         Navigator.of(context).pop(edited);
       }
@@ -44,7 +43,11 @@ class RoomDetailsPage extends StatelessWidget {
             TextButton(
                 onPressed: () => Navigator.pop(context, false),
                 child: const Text('Cancel')),
-            TextButton(
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade600,
+                  foregroundColor: Colors.white,
+                ),
                 onPressed: () => Navigator.pop(context, true),
                 child: const Text('Delete')),
           ],
@@ -53,123 +56,194 @@ class RoomDetailsPage extends StatelessWidget {
 
       if (ok == true) {
         onDelete?.call();
-        Navigator.of(context).pop(); // close details
+        Navigator.of(context).pop();
       }
     }
 
     return CustomScaffold(
       appBar: AppBar(
-        title: Text(room.type == RoomType.DormWithoutBed
-            ? (room.dormName ?? 'Dormitory')
-            : (room.roomNumber ?? room.id)),
+        title: Text(
+          room.type == RoomType.DormWithoutBed
+              ? (room.dormName ?? 'Dormitory')
+              : (room.roomNumber ?? room.id),
+          style: TextStyle(color: Colors.black),
+        ),
+        elevation: 0,
         backgroundColor: const Color(0xFFFBE4CD),
         foregroundColor: Colors.black87,
-        elevation: 0,
         actions: [
           IconButton(
             tooltip: 'Edit',
             onPressed: _openEdit,
-            icon: const Icon(Icons.edit_outlined),
+            icon: const Icon(
+              Icons.edit_outlined,
+              color: Colors.black,
+            ),
           ),
           IconButton(
             tooltip: 'Delete',
             onPressed: _confirmDelete,
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Card(
-          elevation: 2,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    roomTypeToString(room.type),
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      _detailTile('ID', room.id),
-                      _detailTile('Occupancy', '${room.noOfPeople}'),
-                      _detailTile('Room No', room.roomNumber ?? '-'),
-                      _detailTile('Dormitory Name', room.dormName ?? '-'),
-                      _detailTile('Facility', room.roomFacility ?? '-'),
-                      _detailTile('Occupancy Type', room.occupancyType ?? '-'),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  const Text('Tariff Rates',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 8,
-                    children: [
-                      _tariffChip('General', room.tariff.general),
-                      _tariffChip('Allotee', room.tariff.allotee),
-                      _tariffChip('Donor', room.tariff.donor),
-                      _tariffChip('Staff', room.tariff.staff),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: _openEdit,
-                        icon: const Icon(Icons.edit),
-                        label: const Text('Edit Room'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isWide = constraints.maxWidth > 800;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Room Type Header
+                          Text(
+                            roomTypeToString(room.type),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(color: Colors.black54),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // ------- Room Details -------
+                          Text("Room Information",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
+
+                          GridView.count(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisCount: isWide ? 3 : 1,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: isWide ? 3.5 : 4,
+                            children: [
+                              _detailTile('ID', room.id),
+                              _detailTile('Occupancy', '${room.noOfPeople}'),
+                              _detailTile('Room No', room.roomNumber ?? '-'),
+                              _detailTile(
+                                  'Dormitory Name', room.dormName ?? '-'),
+                              _detailTile('Facility', room.roomFacility ?? '-'),
+                              _detailTile(
+                                  'Occupancy Type', room.occupancyType ?? '-'),
+                            ],
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // ------- Tariff Section -------
+                          Text("Tariff Rates",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
+
+                          Table(
+                            border: TableBorder.all(
+                                color: Colors.grey.shade300, width: 1),
+                            columnWidths: const {
+                              0: FlexColumnWidth(2),
+                              1: FlexColumnWidth(3),
+                            },
+                            children: [
+                              _tariffRow('General', room.tariff.general),
+                              _tariffRow('Allotee', room.tariff.allotee),
+                              _tariffRow('Donor', room.tariff.donor),
+                              _tariffRow('Staff', room.tariff.staff),
+                            ],
+                          ),
+
+                          const SizedBox(height: 40),
+                          const Divider(),
+                          const SizedBox(height: 20),
+
+                          // ------- Action Buttons -------
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              OutlinedButton.icon(
+                                onPressed: _confirmDelete,
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.redAccent),
+                                label: const Text("Delete",
+                                    style: TextStyle(color: Colors.redAccent)),
+                              ),
+                              const SizedBox(width: 16),
+                              ElevatedButton.icon(
+                                onPressed: _openEdit,
+                                icon: const Icon(Icons.edit),
+                                label: const Text("Edit Room"),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      TextButton.icon(
-                        onPressed: _confirmDelete,
-                        icon: const Icon(Icons.delete_outline),
-                        label: const Text('Delete'),
-                      )
-                    ],
-                  )
-                ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
   Widget _detailTile(String title, String value) {
-    return SizedBox(
-      width: 220,
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
               style: const TextStyle(color: Colors.black54, fontSize: 12)),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(value,
               style:
-                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
         ],
       ),
     );
   }
 
-  Widget _tariffChip(String label, double? value) {
-    return Chip(
-      label: Text(
-          '$label: ${value == null ? "-" : "₹${value.toStringAsFixed(0)}"}'),
+  TableRow _tariffRow(String label, double? value) {
+    return TableRow(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+      ),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(label,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w600, color: Colors.black87)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(value == null ? "-" : "₹${value.toStringAsFixed(0)}",
+              style: const TextStyle(fontSize: 15)),
+        ),
+      ],
     );
   }
 }
