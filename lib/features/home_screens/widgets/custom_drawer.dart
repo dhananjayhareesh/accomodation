@@ -1,7 +1,10 @@
 import 'package:accomodation_admin/features/side_panel/super_admin/view/create_admin.dart';
 import 'package:accomodation_admin/features/side_panel/super_admin/view/create_room_page.dart';
 import 'package:accomodation_admin/features/side_panel/super_admin/view/list_admin.dart';
+import 'package:accomodation_admin/features/side_panel/super_admin/view/manage_asram.dart';
+import 'package:accomodation_admin/features/side_panel/super_admin/view/room_category.dart';
 import 'package:accomodation_admin/features/side_panel/super_admin/view/room_list.dart';
+import 'package:accomodation_admin/features/side_panel/super_admin/view/sua_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -66,6 +69,9 @@ class CustomDrawer extends StatelessWidget {
                       'Create Room', Icons.meeting_room_outlined, context),
                   _buildDrawerItem(
                       'Manage Rooms', Icons.manage_history, context),
+                  _buildDrawerItem(
+                      'Manage Asrams', Icons.location_city, context),
+                  _buildDrawerItem('Room Category', Icons.category, context),
                   const Divider(
                     thickness: 1,
                     color: Colors.black26,
@@ -140,6 +146,15 @@ class CustomDrawer extends StatelessWidget {
         break;
       case 'Manage Rooms':
         Get.to(() => const RoomListPage());
+      case 'Settings':
+        Get.to(const SuaSettingPage());
+        break;
+      case 'Manage Asrams':
+        Get.to(const ManageAsramPage());
+        break;
+      case 'Room Category':
+        Get.to(const RoomCategoryPage());
+
       default:
         break;
     }

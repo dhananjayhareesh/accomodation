@@ -17,6 +17,10 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
 
   bool _isPasswordVisible = false;
 
+  // Mock Asram list
+  final List<String> _asrams = ["Shanti Asram", "Ananda Ashram", "Seva Asram"];
+  String? _selectedAsram;
+
   // State for checkboxes
   final Map<String, bool> _powers = {
     'Allocation': false,
@@ -30,7 +34,6 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
 
   @override
   void dispose() {
-    // Clean up the controllers when the widget is disposed.
     _nameController.dispose();
     _phoneController.dispose();
     _userIdController.dispose();
@@ -40,7 +43,16 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
 
   void _createAdmin() {
     if (_formKey.currentState!.validate()) {
-      // Form is valid, process the data
+      if (_selectedAsram == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please select an Asram"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final name = _nameController.text;
       final phone = _phoneController.text;
       final userId = _userIdController.text;
@@ -48,18 +60,17 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
       final assignedPowers =
           _powers.entries.where((e) => e.value).map((e) => e.key).toList();
 
-      // You can now use this data to send to your backend, database, etc.
       print('Creating Admin:');
       print('Name: $name');
       print('Phone: $phone');
       print('UserID: $userId');
       print('Password: $password');
+      print('Asram: $_selectedAsram');
       print('Powers: $assignedPowers');
 
-      // Show a confirmation snackbar
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('New admin created successfully!'),
+        SnackBar(
+          content: Text('New admin created for $_selectedAsram!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -68,7 +79,6 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Use the new CustomScaffold and pass the page content to the body
     return CustomScaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -90,12 +100,11 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
                     children: [
                       Text(
                         'Create New Admin',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF382D1E)),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF382D1E),
+                                ),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -126,6 +135,35 @@ class _CreateAdminPageState extends State<CreateAdminPage> {
                       const SizedBox(height: 20),
                       _buildPasswordFormField(),
                       const SizedBox(height: 32),
+
+                      // Asram dropdown
+                      DropdownButtonFormField<String>(
+                        value: _selectedAsram,
+                        items: _asrams
+                            .map((asram) => DropdownMenuItem(
+                                  value: asram,
+                                  child: Text(asram),
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            _selectedAsram = val;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Assign to Asram",
+                          prefixIcon: const Icon(Icons.temple_buddhist),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (val) =>
+                            val == null ? "Please select an Asram" : null,
+                      ),
+                      const SizedBox(height: 32),
+
                       Text(
                         'Assign Powers',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(

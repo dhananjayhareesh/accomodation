@@ -12,6 +12,10 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _selectedRoomType;
+  String? _selectedAsram;
+
+  // Mock asram list
+  final List<String> _asrams = ["Shanti Asram", "Ananda Ashram", "Seva Asram"];
 
   // Controllers
   final TextEditingController _noOfPeopleCtrl = TextEditingController();
@@ -40,6 +44,26 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     super.dispose();
   }
 
+  Widget _buildAsramDropdown() {
+    return SizedBox(
+      width: 300,
+      child: DropdownButtonFormField<String>(
+        value: _selectedAsram,
+        items: _asrams
+            .map((asram) => DropdownMenuItem(
+                  value: asram,
+                  child: Text(asram),
+                ))
+            .toList(),
+        onChanged: (val) => setState(() => _selectedAsram = val),
+        decoration: const InputDecoration(
+          labelText: "Select Asram",
+        ),
+        validator: (val) => val == null ? "Please select an Asram" : null,
+      ),
+    );
+  }
+
   Widget _buildTariffFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,44 +76,24 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           spacing: 20,
           runSpacing: 20,
           children: [
-            SizedBox(
-              width: 250,
-              child: TextFormField(
-                controller: _tariffGeneralCtrl,
-                decoration:
-                    const InputDecoration(labelText: "Tariff (General)"),
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            SizedBox(
-              width: 250,
-              child: TextFormField(
-                controller: _tariffAlloteeCtrl,
-                decoration:
-                    const InputDecoration(labelText: "Tariff (Allotee)"),
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            SizedBox(
-              width: 250,
-              child: TextFormField(
-                controller: _tariffDonorCtrl,
-                decoration: const InputDecoration(labelText: "Tariff (Donor)"),
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            SizedBox(
-              width: 250,
-              child: TextFormField(
-                controller: _tariffStaffCtrl,
-                decoration:
-                    const InputDecoration(labelText: "Tariff (Working Staff)"),
-                keyboardType: TextInputType.number,
-              ),
-            ),
+            _buildTariffInput("Tariff (General)", _tariffGeneralCtrl),
+            _buildTariffInput("Tariff (Allotee)", _tariffAlloteeCtrl),
+            _buildTariffInput("Tariff (Donor)", _tariffDonorCtrl),
+            _buildTariffInput("Tariff (Working Staff)", _tariffStaffCtrl),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildTariffInput(String label, TextEditingController ctrl) {
+    return SizedBox(
+      width: 250,
+      child: TextFormField(
+        controller: ctrl,
+        decoration: InputDecoration(labelText: label),
+        keyboardType: TextInputType.number,
+      ),
     );
   }
 
@@ -97,6 +101,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _buildAsramDropdown(),
+        const SizedBox(height: 20),
         Wrap(
           spacing: 20,
           runSpacing: 20,
@@ -123,7 +129,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   DropdownMenuItem(value: "Non-AC", child: Text("Non-AC")),
                 ],
                 onChanged: (val) => setState(() => _roomFacility = val),
-                decoration: const InputDecoration(labelText: "Room Type"),
+                decoration: const InputDecoration(labelText: "Room Category"),
               ),
             ),
             SizedBox(
@@ -155,16 +161,32 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   }
 
   Widget _buildDormWithBedFields() {
-    _noOfPeopleCtrl.text = "1"; // Default
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 250,
-          child: TextFormField(
-            controller: _roomNumberCtrl,
-            decoration: const InputDecoration(labelText: "Assign Room No."),
-          ),
+        _buildAsramDropdown(),
+        const SizedBox(height: 20),
+        Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          children: [
+            SizedBox(
+              width: 250,
+              child: TextFormField(
+                controller: _noOfPeopleCtrl,
+                decoration: const InputDecoration(
+                    labelText: "No. of People Who Can Occupy"),
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            SizedBox(
+              width: 250,
+              child: TextFormField(
+                controller: _dormNameCtrl,
+                decoration: const InputDecoration(labelText: "Dormitory Name"),
+              ),
+            ),
+          ],
         ),
         _buildTariffFields(),
       ],
@@ -175,6 +197,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _buildAsramDropdown(),
+        const SizedBox(height: 20),
         Wrap(
           spacing: 20,
           runSpacing: 20,
@@ -205,7 +229,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      // backgroundColor: const Color(0xFFeef7fb),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -270,10 +293,11 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // Submit logic
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Room Created Successfully!"),
+                                SnackBar(
+                                  content: Text(
+                                    "Room Created Successfully in $_selectedAsram!",
+                                  ),
                                 ),
                               );
                             }
