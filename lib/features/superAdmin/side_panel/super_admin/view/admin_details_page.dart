@@ -1,4 +1,4 @@
-import 'package:accomodation_admin/features/side_panel/super_admin/model/admin_list_model.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/model/admin_list_model.dart';
 import 'package:accomodation_admin/widgets/custom_scafold.dart';
 import 'package:flutter/material.dart';
 

@@ -1,10 +1,10 @@
-import 'package:accomodation_admin/features/side_panel/super_admin/view/create_admin.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/create_room_page.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/list_admin.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/manage_asram.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/room_category.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/room_list.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/sua_setting.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/create_admin.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/create_room_page.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/list_admin.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/manage_asram.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/room_category.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/room_list.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/sua_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

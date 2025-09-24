@@ -1,6 +1,6 @@
 // ---------- ROOM DETAILS PAGE (Responsive & Professional) ----------
-import 'package:accomodation_admin/features/side_panel/super_admin/view/edit_room.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/room_list.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/edit_room.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/room_list.dart';
 import 'package:accomodation_admin/widgets/custom_scafold.dart';
 import 'package:flutter/material.dart';
 

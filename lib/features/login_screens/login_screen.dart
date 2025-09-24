@@ -1,8 +1,9 @@
 import 'dart:ui'; // For ImageFilter and opacity effect
+import 'package:accomodation_admin/features/counterUser/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../home_screens/view/home_screen_su_ad.dart';
+import '../superAdmin/home_screens/view/home_screen_su_ad.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,18 +40,26 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  // Login Method with Demo Check
+// Login Method with Demo Check
   void _login() {
     if (_formKey.currentState!.validate()) {
-      // Check if the credentials match the demo credentials
-      if (_usernameController.text == demoUsername &&
-          _passwordController.text == demoPassword) {
-        // Successful login, navigate to HomeScreen (Super Admin dashboard)
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+
+      // Super Admin login
+      if (username == demoUsername && password == demoPassword) {
         Get.snackbar("Success", "Logged in successfully",
             snackPosition: SnackPosition.BOTTOM);
-        Get.to(() => const HomeScreen()); // Navigate to the HomeScreen
-      } else {
-        // Show error if the credentials don't match
+        Get.to(() => const HomeScreen()); // Navigate to Super Admin Home
+      }
+      // Counter User login
+      else if (username == "counteruser" && password == "counter123") {
+        Get.snackbar("Success", "Logged in successfully",
+            snackPosition: SnackPosition.BOTTOM);
+        Get.to(() => MainScreen()); // Navigate to Counter User Main
+      }
+      // Invalid login
+      else {
         Get.snackbar("Error", "Invalid username or password",
             snackPosition: SnackPosition.BOTTOM);
       }

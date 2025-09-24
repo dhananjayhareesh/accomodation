@@ -1,4 +1,4 @@
-import 'package:accomodation_admin/features/home_screens/widgets/custom_drawer.dart';
+import 'package:accomodation_admin/features/superAdmin/home_screens/widgets/custom_drawer.dart';
 import 'package:accomodation_admin/widgets/custom_scafold.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';

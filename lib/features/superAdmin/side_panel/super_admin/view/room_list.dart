@@ -3,8 +3,8 @@
 // Includes: Room model, sample data, RoomListPage, RoomDetailsPage, Edit/Create form.
 // Paste into your project and navigate to RoomListPage.
 
-import 'package:accomodation_admin/features/side_panel/super_admin/view/edit_room.dart';
-import 'package:accomodation_admin/features/side_panel/super_admin/view/room_details.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/edit_room.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/view/room_details.dart';
 import 'package:accomodation_admin/widgets/custom_scafold.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
