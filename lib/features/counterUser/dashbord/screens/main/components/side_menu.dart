@@ -1,5 +1,11 @@
+import 'package:accomodation_admin/features/counterUser/allocationModule/screens/allocation_screen.dart';
+import 'package:accomodation_admin/features/counterUser/cancellationModule/screens/cancellation_screen.dart';
+import 'package:accomodation_admin/features/counterUser/extentionModule/screens/extention_screen.dart';
+import 'package:accomodation_admin/features/counterUser/registrationModule/screens/indian_reg.dart';
+import 'package:accomodation_admin/features/counterUser/vacationModule/screens/vacation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({
@@ -17,41 +23,71 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Allocation",
             svgSrc: "assets/icons/menu_dashboard.svg",
-            press: () {},
+            press: () {
+              Get.to(const AllocationScreen());
+            },
           ),
           DrawerListTile(
             title: "Extention",
             svgSrc: "assets/icons/menu_tran.svg",
-            press: () {},
+            press: () {
+              Get.to(const ExtensionScreen());
+            },
           ),
           DrawerListTile(
             title: "Vacation",
             svgSrc: "assets/icons/menu_task.svg",
-            press: () {},
+            press: () {
+              Get.to(const VacationScreen());
+            },
           ),
           DrawerListTile(
-            title: "Documents",
+            title: "Cancellation",
             svgSrc: "assets/icons/menu_doc.svg",
+            press: () {
+              Get.to(const CancellationScreen());
+            },
+          ),
+          DrawerListTile(
+            title: "Group Allocation",
+            svgSrc: "assets/icons/menu_notification.svg",
             press: () {},
           ),
           DrawerListTile(
-            title: "Store",
+            title: "Registration - Indians",
+            svgSrc: "assets/icons/menu_store.svg",
+            press: () {
+              Get.to(const IndianRegScreen());
+            },
+          ),
+          DrawerListTile(
+            title: "Registration - Foreigners",
             svgSrc: "assets/icons/menu_store.svg",
             press: () {},
           ),
           DrawerListTile(
-            title: "Notification",
+            title: "Enquires",
             svgSrc: "assets/icons/menu_notification.svg",
+            press: () {},
+          ),
+          DrawerListTile(
+            title: "Modify",
+            svgSrc: "assets/icons/menu_notification.svg",
+            press: () {},
+          ),
+          DrawerListTile(
+            title: "Guest Diary",
+            svgSrc: "assets/icons/menu_notification.svg",
+            press: () {},
+          ),
+          DrawerListTile(
+            title: "Reports",
+            svgSrc: "assets/icons/menu_profile.svg",
             press: () {},
           ),
           DrawerListTile(
             title: "Profile",
             svgSrc: "assets/icons/menu_profile.svg",
-            press: () {},
-          ),
-          DrawerListTile(
-            title: "Settings",
-            svgSrc: "assets/icons/menu_setting.svg",
             press: () {},
           ),
         ],

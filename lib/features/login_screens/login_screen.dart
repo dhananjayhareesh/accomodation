@@ -1,5 +1,5 @@
 import 'dart:ui'; // For ImageFilter and opacity effect
-import 'package:accomodation_admin/features/counterUser/screens/main/main_screen.dart';
+import 'package:accomodation_admin/features/counterUser/dashbord/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

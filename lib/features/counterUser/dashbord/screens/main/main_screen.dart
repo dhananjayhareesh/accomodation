@@ -1,5 +1,5 @@
 import 'package:accomodation_admin/features/counterUser/responsive.dart';
-import 'package:accomodation_admin/features/counterUser/screens/dashboard/dashboard_screen.dart';
+import 'package:accomodation_admin/features/counterUser/dashbord/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'components/side_menu.dart';

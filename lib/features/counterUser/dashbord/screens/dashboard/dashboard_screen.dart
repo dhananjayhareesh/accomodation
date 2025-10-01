@@ -1,8 +1,8 @@
 import 'package:accomodation_admin/features/counterUser/responsive.dart';
-import 'package:accomodation_admin/features/counterUser/screens/dashboard/components/my_fields.dart';
+import 'package:accomodation_admin/features/counterUser/dashbord/screens/dashboard/components/my_fields.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
+import '../../../constants.dart';
 import 'components/header.dart';
 
 import 'components/recent_files.dart';

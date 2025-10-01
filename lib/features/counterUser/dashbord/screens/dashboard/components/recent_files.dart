@@ -1,8 +1,8 @@
-import 'package:accomodation_admin/features/counterUser/models/recent_file.dart';
+import 'package:accomodation_admin/features/counterUser/dashbord/models/recent_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../constants.dart';
+import '../../../../constants.dart';
 
 class RecentFiles extends StatelessWidget {
   const RecentFiles({

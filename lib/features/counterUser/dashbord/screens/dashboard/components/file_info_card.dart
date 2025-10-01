@@ -1,8 +1,8 @@
-import 'package:accomodation_admin/features/counterUser/models/my_files.dart';
+import 'package:accomodation_admin/features/counterUser/dashbord/models/my_files.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../constants.dart';
+import '../../../../constants.dart';
 
 class FileInfoCard extends StatelessWidget {
   const FileInfoCard({
