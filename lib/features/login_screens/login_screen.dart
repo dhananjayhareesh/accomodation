@@ -1,15 +1,15 @@
 import 'dart:ui'; // For ImageFilter and opacity effect
 import 'package:accomodation_admin/features/counterUser/dashbord/screens/main/main_screen.dart';
+import 'package:accomodation_admin/features/login_screens/controller/auth_controller.dart';
+import 'package:accomodation_admin/features/superAdmin/home_screens/view/home_screen_su_ad.dart';
+import 'package:accomodation_admin/local_storage/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../superAdmin/home_screens/view/home_screen_su_ad.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -19,15 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  final LoginController loginController = Get.put(LoginController());
+
   // Colors
   final Color _primaryColor = const Color(0xFF372f24);
   final Color _secondaryColor = const Color(0xFFcfa338);
   final Color _backgroundColor = const Color(0xFFd3e4ec);
   final Color _inputBackgroundColor = Colors.white.withOpacity(0.3);
-
-  // Demo Credentials
-  final String demoUsername = "superadmin";
-  final String demoPassword = "admin123";
 
   // Validation Method
   String? _validateField(String? value, String fieldName, int minLength) {
@@ -40,28 +38,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-// Login Method with Demo Check
-  void _login() {
+  // Real Login Method
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      final username = _usernameController.text;
-      final password = _passwordController.text;
+      final username = _usernameController.text.trim();
+      final password = _passwordController.text.trim();
 
-      // Super Admin login
-      if (username == demoUsername && password == demoPassword) {
-        Get.snackbar("Success", "Logged in successfully",
-            snackPosition: SnackPosition.BOTTOM);
-        Get.to(() => const HomeScreen()); // Navigate to Super Admin Home
-      }
-      // Counter User login
-      else if (username == "counteruser" && password == "counter123") {
-        Get.snackbar("Success", "Logged in successfully",
-            snackPosition: SnackPosition.BOTTOM);
-        Get.to(() => MainScreen()); // Navigate to Counter User Main
-      }
-      // Invalid login
-      else {
-        Get.snackbar("Error", "Invalid username or password",
-            snackPosition: SnackPosition.BOTTOM);
+      await loginController.login(username, password, "admin");
+
+      // After login success -> check stored token
+      final token = MySharedPref.getAuthToken();
+      final loggedIn = MySharedPref.getLoggedInStatus();
+
+      if (loggedIn && token != null) {
+        // ✅ Navigate based on userType
+        if (username == "admin") {
+          Get.offAll(() => HomeScreen()); // Super Admin
+        } else {
+          Get.offAll(() => MainScreen()); // Counter User
+        }
       }
     }
   }
@@ -112,17 +107,15 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background logo with low opacity
           Positioned.fill(
             child: Opacity(
               opacity: 0.1,
               child: Image.asset(
-                'assets/png/logo.png', // Replace with your logo image
+                'assets/png/logo.png',
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          // Glassmorphism container with elegant padding
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -130,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: _secondaryColor, // Background color for container
+                    color: _secondaryColor,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.3),
@@ -151,7 +144,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const SizedBox(height: 30),
-                              // Header Text
                               const Text(
                                 'Welcome Back!',
                                 style: TextStyle(
@@ -161,8 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-
-                              // Username Field
                               _buildInputField(
                                 label: 'Username',
                                 controller: _usernameController,
@@ -170,10 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fieldName: 'username',
                                 minLength: 1,
                               ),
-
                               const SizedBox(height: 20),
-
-                              // Password Field
                               _buildInputField(
                                 label: 'Password',
                                 controller: _passwordController,
@@ -182,30 +169,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                 minLength: 6,
                                 obscureText: true,
                               ),
-
                               const SizedBox(height: 30),
-
-                              // Login Button with hover effect for web
-                              SizedBox(
-                                width: 500,
-                                child: ElevatedButton(
-                                  onPressed: _login,
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    minimumSize:
-                                        const Size(double.infinity, 50),
-                                    backgroundColor: _primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
+                              Obx(() => SizedBox(
+                                    width: 500,
+                                    child: ElevatedButton(
+                                      onPressed: loginController.isLoading.value
+                                          ? null
+                                          : _login,
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        minimumSize:
+                                            const Size(double.infinity, 50),
+                                        backgroundColor: _primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        elevation: 5,
+                                      ),
+                                      child: loginController.isLoading.value
+                                          ? const CircularProgressIndicator(
+                                              color: Colors.white)
+                                          : const Text('Login'),
                                     ),
-                                    elevation: 5,
-                                  ),
-                                  child: const Text('Login'),
-                                ),
-                              ),
+                                  )),
                               const SizedBox(height: 20),
-
-                              // Forgot Password Link
                               TextButton(
                                 onPressed: () {
                                   Get.snackbar(

@@ -1,5 +1,8 @@
-import 'package:accomodation_admin/widgets/custom_scafold.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/asramCreation/controller/asrm_creation_controller.dart';
+import 'package:accomodation_admin/features/superAdmin/side_panel/super_admin/asramCreation/model/asram_list_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:accomodation_admin/widgets/custom_scafold.dart';
 
 class ManageAsramPage extends StatefulWidget {
   const ManageAsramPage({super.key});
@@ -9,19 +12,26 @@ class ManageAsramPage extends StatefulWidget {
 }
 
 class _ManageAsramPageState extends State<ManageAsramPage> {
-  final List<Map<String, String>> _asrams = [
-    {"name": "Shanti Asram", "location": "Kerala"},
-    {"name": "Ananda Ashram", "location": "Bangalore"},
-  ];
+  final AsrmCreationController _controller = Get.put(AsrmCreationController());
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
 
-  void _showAsramDialog({Map<String, String>? existing, int? index}) {
-    // prefill if editing
+  @override
+  void initState() {
+    super.initState();
+    _loadAsramList(); // 👈 Load API data on page open
+  }
+
+  Future<void> _loadAsramList() async {
+    await _controller
+        .fetchAsramList(); // calls repo -> controller -> updates list
+  }
+
+  void _showAsramDialog({Datum? existing}) {
     if (existing != null) {
-      _nameController.text = existing["name"] ?? "";
-      _locationController.text = existing["location"] ?? "";
+      _nameController.text = existing.name;
+      _locationController.text = existing.location;
     } else {
       _nameController.clear();
       _locationController.clear();
@@ -51,8 +61,7 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
                     decoration: InputDecoration(
                       labelText: "Name of Asram",
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -61,8 +70,7 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
                     decoration: InputDecoration(
                       labelText: "Location",
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -74,37 +82,31 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
                         onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 12),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                        ),
-                        onPressed: () {
-                          if (_nameController.text.isNotEmpty &&
-                              _locationController.text.isNotEmpty) {
-                            setState(() {
-                              if (existing == null) {
-                                // create new
-                                _asrams.add({
-                                  "name": _nameController.text,
-                                  "location": _locationController.text,
-                                });
-                              } else {
-                                // update existing
-                                _asrams[index!] = {
-                                  "name": _nameController.text,
-                                  "location": _locationController.text,
-                                };
-                              }
-                            });
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Text(existing == null ? "Create" : "Update"),
-                      ),
+                      Obx(() {
+                        final isBusy = _controller.isLoading.value;
+                        return ElevatedButton(
+                          onPressed: isBusy
+                              ? null
+                              : () async {
+                                  final name = _nameController.text.trim();
+                                  final loc = _locationController.text.trim();
+                                  if (name.isEmpty || loc.isEmpty) return;
+
+                                  await _controller.createAsram(
+                                      name: name, location: loc);
+                                  await _loadAsramList(); // 👈 refresh after creation
+                                  if (context.mounted) Navigator.pop(context);
+                                },
+                          child: isBusy
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text(existing == null ? "Create" : "Update"),
+                        );
+                      }),
                     ],
                   ),
                 ],
@@ -116,13 +118,12 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
     );
   }
 
-  void _confirmDelete(int index) {
+  void _confirmDelete(Datum item) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Delete Asram"),
-        content: Text(
-            "Are you sure you want to delete '${_asrams[index]["name"]}'?"),
+        content: Text("Are you sure you want to delete '${item.name}'?"),
         actions: [
           TextButton(
             child: const Text("Cancel"),
@@ -131,9 +132,7 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              setState(() {
-                _asrams.removeAt(index);
-              });
+              _controller.asramList.remove(item);
               Navigator.pop(context);
             },
             child: const Text("Delete"),
@@ -143,7 +142,7 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
     );
   }
 
-  Widget _buildAsramCard(Map<String, String> asram, int index) {
+  Widget _buildAsramCard(Datum asram) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -153,7 +152,6 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header row with actions
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -164,53 +162,47 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
                       borderRadius: BorderRadius.circular(8)),
                   onSelected: (value) {
                     if (value == "edit") {
-                      _showAsramDialog(existing: asram, index: index);
+                      _showAsramDialog(existing: asram);
                     } else if (value == "delete") {
-                      _confirmDelete(index);
+                      _confirmDelete(asram);
                     }
                   },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
                       value: "edit",
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, size: 18),
-                          SizedBox(width: 8),
-                          Text("Edit")
-                        ],
-                      ),
+                      child: Row(children: [
+                        Icon(Icons.edit, size: 18),
+                        SizedBox(width: 8),
+                        Text("Edit")
+                      ]),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: "delete",
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, size: 18, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text("Delete"),
-                        ],
-                      ),
+                      child: Row(children: [
+                        Icon(Icons.delete, size: 18, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text("Delete"),
+                      ]),
                     ),
                   ],
                 )
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              asram["name"] ?? "",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-            ),
+            Text(asram.name,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis),
             const SizedBox(height: 6),
             Row(
               children: [
                 const Icon(Icons.location_on, size: 16, color: Colors.grey),
                 const SizedBox(width: 4),
                 Expanded(
-                  child: Text(
-                    asram["location"] ?? "",
-                    style: const TextStyle(color: Colors.black87, fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: Text(asram.location,
+                      style:
+                          const TextStyle(color: Colors.black87, fontSize: 14),
+                      overflow: TextOverflow.ellipsis),
                 ),
               ],
             ),
@@ -228,29 +220,29 @@ class _ManageAsramPageState extends State<ManageAsramPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Manage Asrams",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+            const Text("Manage Asrams",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Expanded(
-              child: _asrams.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No Asrams added yet.",
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 16,
-                        runSpacing: 16,
-                        children: List.generate(
-                          _asrams.length,
-                          (index) => _buildAsramCard(_asrams[index], index),
-                        ),
-                      ),
-                    ),
+              child: Obx(() {
+                if (_controller.isLoading.value &&
+                    _controller.asramList.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (_controller.asramList.isEmpty) {
+                  return const Center(
+                      child: Text("No Asrams added yet.",
+                          style: TextStyle(color: Colors.grey, fontSize: 16)));
+                }
+                return SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children:
+                        _controller.asramList.map(_buildAsramCard).toList(),
+                  ),
+                );
+              }),
             ),
           ],
         ),

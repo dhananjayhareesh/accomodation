@@ -1,4 +1,3 @@
-
 enum ApiCallStatus {
   loading,
   success,
@@ -8,3 +7,5 @@ enum ApiCallStatus {
   cache,
   refresh,
 }
+
+enum AppBuild { dev, prod }

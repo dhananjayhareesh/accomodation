@@ -31,6 +31,27 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   // Dropdown selections
   String? _roomFacility;
   String? _occupancyType;
+  String? _occupancyStatus;
+  String? _roomStatus;
+
+  static const List<String> ALLOWED_STATUS = [
+    "vacant",
+    "occupied",
+    "reserved",
+    "maintenance",
+    "guest",
+  ];
+
+  static const List<String> ALLOTTEE_STATUS = [
+    "KOB", // Key on Board
+    "CT", // Central Trust
+    "OCP", // Occupied by Paid
+    "OCN", // Occupied Non-Paid
+    "OAP", // Occupied by Allottee Paid
+    "OAN", // Occupied by Allottee Non-Paid
+    "OSP", // Occupied Staff Paid
+    "OSN", // Occupied Staff Non-Paid
+  ];
 
   @override
   void dispose() {
@@ -142,7 +163,10 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   DropdownMenuItem(
                       value: "Working Staff", child: Text("Working Staff")),
                 ],
-                onChanged: (val) => setState(() => _occupancyType = val),
+                onChanged: (val) => setState(() {
+                  _occupancyType = val;
+                  _occupancyStatus = null;
+                }),
                 decoration: const InputDecoration(labelText: "Occupancy Type"),
               ),
             ),
@@ -155,6 +179,39 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             ),
           ],
         ),
+
+        // Conditional: show occupancy status only if Allotee is selected
+        if (_occupancyType == "Allotee") ...[
+          const SizedBox(height: 16),
+          SizedBox(
+            width: 250,
+            child: DropdownButtonFormField<String>(
+              value: _occupancyStatus,
+              items: ALLOTTEE_STATUS
+                  .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                  .toList(),
+              onChanged: (val) => setState(() => _occupancyStatus = val),
+              decoration: const InputDecoration(labelText: "Occupancy Status"),
+              validator: (val) =>
+                  val == null ? "Select Occupancy Status" : null,
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 16),
+        SizedBox(
+          width: 250,
+          child: DropdownButtonFormField<String>(
+            value: _roomStatus,
+            items: ALLOWED_STATUS
+                .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                .toList(),
+            onChanged: (val) => setState(() => _roomStatus = val),
+            decoration: const InputDecoration(labelText: "Room Status"),
+            validator: (val) => val == null ? "Select Room Status" : null,
+          ),
+        ),
+
         _buildTariffFields(),
       ],
     );
@@ -188,6 +245,19 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             ),
           ],
         ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: 250,
+          child: DropdownButtonFormField<String>(
+            value: _roomStatus,
+            items: ALLOWED_STATUS
+                .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                .toList(),
+            onChanged: (val) => setState(() => _roomStatus = val),
+            decoration: const InputDecoration(labelText: "Room Status"),
+            validator: (val) => val == null ? "Select Room Status" : null,
+          ),
+        ),
         _buildTariffFields(),
       ],
     );
@@ -220,6 +290,19 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: 250,
+          child: DropdownButtonFormField<String>(
+            value: _roomStatus,
+            items: ALLOWED_STATUS
+                .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                .toList(),
+            onChanged: (val) => setState(() => _roomStatus = val),
+            decoration: const InputDecoration(labelText: "Room Status"),
+            validator: (val) => val == null ? "Select Room Status" : null,
+          ),
         ),
         _buildTariffFields(),
       ],

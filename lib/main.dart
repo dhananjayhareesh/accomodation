@@ -31,6 +31,8 @@
 // }
 
 import 'package:accomodation_admin/features/counterUser/constants.dart';
+import 'package:accomodation_admin/services/api_constants.dart';
+import 'package:accomodation_admin/utils/enum.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,6 +43,7 @@ import 'utils/navigator_key_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  BaseUrl.buildType = AppBuild.prod;
   await MySharedPref.init();
   runApp(const MyApp());
 }

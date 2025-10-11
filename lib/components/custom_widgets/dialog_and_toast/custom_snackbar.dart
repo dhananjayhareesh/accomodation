@@ -80,15 +80,24 @@ class CustomSnackBar {
 class CustomFlutterToast {
   static final _fToast = FToast();
 
-  static successToast(String? message) {
-    _fToast.showToast(
-      child: Text(message ?? "OOps Something went wrong"),
-      gravity: ToastGravity.TOP_LEFT,
-      toastDuration: const Duration(seconds: 2),
+  static successToast({String? msg}) {
+    Fluttertoast.showToast(
+      msg: msg ?? "Something went wrong",
+      // toastLength: Toast.LENGTH_SHORT,
+      // gravity: ToastGravity.BOTTOM,
+      // timeInSecForIosWeb: 1,
+      // backgroundColor: const Color.fromARGB(255, 213, 212, 212),
+      // textColor: Colors.black,
+      // fontSize: 16.0
     );
+    // _fToast.showToast(
+    //   child: Text(message ?? "OOps Something went wrong"),
+    //   gravity: ToastGravity.TOP_LEFT,
+    //   toastDuration: const Duration(seconds: 2),
+    // );
   }
 
- static void iniMethod() {
-    _fToast.init(NavigatorKeyHelper.getCurrentContext);
+  static void iniMethod() {
+    _fToast.init(Get.context!);
   }
 }
